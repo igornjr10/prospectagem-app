@@ -422,13 +422,37 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
     categoryMarkersRef.current = []
 
     const bounds = new window.google.maps.LatLngBounds(IMPERATRIZ_BOUNDS.sw, IMPERATRIZ_BOUNDS.ne)
+    const allMapped = []
 
-    placesServiceRef.current.textSearch(
-      { query: `${query} Imperatriz Maranhão`, bounds },
-      (results, status) => {
-        setCategoryLoading(false)
-        if (status !== window.google.maps.places.PlacesServiceStatus.OK || !results) return
+    function addMarkers(places) {
+      places.forEach(place => {
+        const existing = leads.find(l =>
+          (l.google_place_id && l.google_place_id === place.placeId) ||
+          l.name.toLowerCase().trim() === place.name.toLowerCase().trim()
+        )
+        const color = existing
+          ? (STATUS_CONFIG[existing.status]?.color || '#6B7280')
+          : '#4B5563'
 
+        const marker = new window.google.maps.Marker({
+          position: { lat: place.lat, lng: place.lng },
+          map: mapInstanceRef.current,
+          title: place.name,
+          icon: {
+            url: createSmallPin(color),
+            scaledSize: new window.google.maps.Size(20, 24),
+            anchor: new window.google.maps.Point(10, 24),
+          },
+          zIndex: 500,
+        })
+        categoryMarkersRef.current.push(marker)
+      })
+    }
+
+    function handlePage(results, status, pagination) {
+      const OK = window.google.maps.places.PlacesServiceStatus.OK
+
+      if (status === OK && results?.length) {
         const mapped = results.map(p => ({
           placeId: p.place_id,
           name: p.name,
@@ -438,39 +462,30 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
           rating: p.rating || null,
         }))
 
-        setCategoryResults(mapped)
+        allMapped.push(...mapped)
+        setCategoryResults([...allMapped])
+        addMarkers(mapped)
 
-        // Pins pequenos para cada resultado
-        mapped.forEach(place => {
-          const existing = leads.find(l =>
-            (l.google_place_id && l.google_place_id === place.placeId) ||
-            l.name.toLowerCase().trim() === place.name.toLowerCase().trim()
-          )
-          const color = existing
-            ? (STATUS_CONFIG[existing.status]?.color || '#6B7280')
-            : '#4B5563'
-
-          const marker = new window.google.maps.Marker({
-            position: { lat: place.lat, lng: place.lng },
-            map: mapInstanceRef.current,
-            title: place.name,
-            icon: {
-              url: createSmallPin(color),
-              scaledSize: new window.google.maps.Size(20, 24),
-              anchor: new window.google.maps.Point(10, 24),
-            },
-            zIndex: 500,
-          })
-          categoryMarkersRef.current.push(marker)
-        })
-
-        // Ajusta zoom para ver todos os resultados
-        if (mapped.length > 0) {
-          const fitBounds = new window.google.maps.LatLngBounds()
-          mapped.forEach(p => fitBounds.extend({ lat: p.lat, lng: p.lng }))
-          mapInstanceRef.current.fitBounds(fitBounds, { top: 80, right: 20, bottom: 320, left: 20 })
+        // Google exige ≥2s entre páginas
+        if (pagination?.hasNextPage) {
+          setTimeout(() => pagination.nextPage(), 2000)
+          return // ainda carregando
         }
       }
+
+      // Última página (ou erro): finaliza
+      setCategoryLoading(false)
+
+      if (allMapped.length > 0) {
+        const fitBounds = new window.google.maps.LatLngBounds()
+        allMapped.forEach(p => fitBounds.extend({ lat: p.lat, lng: p.lng }))
+        mapInstanceRef.current.fitBounds(fitBounds, { top: 80, right: 20, bottom: 320, left: 20 })
+      }
+    }
+
+    placesServiceRef.current.textSearch(
+      { query: `${query} Imperatriz Maranhão`, bounds },
+      handlePage
     )
   }, [leads])
 
