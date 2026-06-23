@@ -507,33 +507,11 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
       })
     }
 
-    function handlePage(results, status, pagination) {
-      const OK = window.google.maps.places.PlacesServiceStatus.OK
+    const seenIds = new Set()
+    let pendingSearches = 0 // quantas buscas ainda ativas
 
-      if (status === OK && results?.length) {
-        const mapped = results.map(p => ({
-          placeId: p.place_id,
-          name: p.name,
-          address: p.formatted_address || p.vicinity || '',
-          lat: p.geometry.location.lat(),
-          lng: p.geometry.location.lng(),
-          rating: p.rating || null,
-        }))
-
-        allMapped.push(...mapped)
-        setCategoryResults([...allMapped])
-        addMarkers(mapped)
-
-        // Google exige ≥2s entre páginas
-        if (pagination?.hasNextPage) {
-          setTimeout(() => pagination.nextPage(), 2000)
-          return // ainda carregando
-        }
-      }
-
-      // Última página (ou erro): finaliza
+    function finalize() {
       setCategoryLoading(false)
-
       if (allMapped.length > 0) {
         const fitBounds = new window.google.maps.LatLngBounds()
         allMapped.forEach(p => fitBounds.extend({ lat: p.lat, lng: p.lng }))
@@ -541,13 +519,54 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
       }
     }
 
+    function processResults(results, status, pagination) {
+      const OK = window.google.maps.places.PlacesServiceStatus.OK
+
+      if (status === OK && results?.length) {
+        const mapped = results
+          .filter(p => !seenIds.has(p.place_id))
+          .map(p => {
+            seenIds.add(p.place_id)
+            return {
+              placeId: p.place_id,
+              name: p.name,
+              address: p.formatted_address || p.vicinity || '',
+              lat: p.geometry.location.lat(),
+              lng: p.geometry.location.lng(),
+              rating: p.rating || null,
+            }
+          })
+
+        if (mapped.length) {
+          allMapped.push(...mapped)
+          setCategoryResults([...allMapped])
+          addMarkers(mapped)
+        }
+
+        if (pagination?.hasNextPage) {
+          setTimeout(() => pagination.nextPage(), 2100)
+          return // ainda há páginas
+        }
+      }
+
+      pendingSearches--
+      if (pendingSearches <= 0) finalize()
+    }
+
+    const center = new window.google.maps.LatLng(IMPERATRIZ_CENTER.lat, IMPERATRIZ_CENTER.lng)
+
+    // ── textSearch: sem bounds/location para permitir paginação ──
+    pendingSearches++
     placesServiceRef.current.textSearch(
-      {
-        query: `${query} Imperatriz Maranhão`,
-        location: new window.google.maps.LatLng(IMPERATRIZ_CENTER.lat, IMPERATRIZ_CENTER.lng),
-        radius: 20000,
-      },
-      handlePage
+      { query: `${query} Imperatriz Maranhão` },
+      processResults
+    )
+
+    // ── nearbySearch: busca por proximidade com keyword ──
+    pendingSearches++
+    placesServiceRef.current.nearbySearch(
+      { location: center, radius: 20000, keyword: query },
+      processResults
     )
   }, [leads])
 
