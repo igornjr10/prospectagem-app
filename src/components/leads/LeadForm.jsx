@@ -68,15 +68,15 @@ function SelectGrid({ options, value, onChange }) {
 }
 
 // ─── Componente principal ──────────────────────────────────────────────────
-export default function LeadForm({ coords, userId, onSave, onClose }) {
+export default function LeadForm({ coords, prefill, userId, onSave, onClose }) {
   const [form, setForm] = useState({
-    name: '',
-    type: '',
-    address: '',
-    contact_name: '',
-    contact_phone: '',
-    notes: '',
-    source: 'visita_espontanea',
+    name:          prefill?.name          || '',
+    type:          '',
+    address:       prefill?.address       || '',
+    contact_name:  '',
+    contact_phone: prefill?.contact_phone || '',
+    notes:         '',
+    source:        prefill?.source        || 'visita_espontanea',
   })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -97,11 +97,13 @@ export default function LeadForm({ coords, userId, onSave, onClose }) {
         .from('establishments')
         .insert({
           ...form,
-          user_id: userId,
-          lat: coords?.lat || null,
-          lng: coords?.lng || null,
-          status: 'nao_visitado',
-          score: 10,
+          user_id:          userId,
+          lat:              coords?.lat              || null,
+          lng:              coords?.lng              || null,
+          google_place_id:  prefill?.google_place_id || null,
+          google_rating:    prefill?.google_rating   || null,
+          status:           'nao_visitado',
+          score:            10,
         })
         .select()
         .single()

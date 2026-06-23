@@ -17,21 +17,30 @@ const NAV_ITEMS = [
 ]
 
 export default function App() {
-  const [session, setSession] = useState(null)
-  const [activePage, setActivePage] = useState('map')
+  const [session, setSession]         = useState(null)
+  const [activePage, setActivePage]   = useState('map')
   const [authLoading, setAuthLoading] = useState(true)
+  const [sellerName, setSellerName]   = useState('Vendedor')
   const [newLeadCoords, setNewLeadCoords] = useState(null)
-  const [visitLead, setVisitLead] = useState(null)
+  const [visitLead, setVisitLead]     = useState(null)
   const [profileLead, setProfileLead] = useState(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setAuthLoading(false)
+      if (session?.user?.id) {
+        supabase.from('profiles').select('name').eq('id', session.user.id).single()
+          .then(({ data }) => { if (data?.name) setSellerName(data.name) })
+      }
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
+      if (session?.user?.id) {
+        supabase.from('profiles').select('name').eq('id', session.user.id).single()
+          .then(({ data }) => { if (data?.name) setSellerName(data.name) })
+      }
     })
 
     return () => subscription.unsubscribe()
@@ -50,7 +59,6 @@ export default function App() {
   }
 
   const userId = session.user.id
-  const sellerName = session.user.user_metadata?.name || session.user.email
 
   return (
     <div className="h-screen w-screen flex flex-col bg-gray-950 overflow-hidden">
@@ -59,6 +67,7 @@ export default function App() {
       {newLeadCoords && (
         <LeadForm
           coords={newLeadCoords}
+          prefill={newLeadCoords.prefill}
           userId={userId}
           onSave={() => setNewLeadCoords(null)}
           onClose={() => setNewLeadCoords(null)}
