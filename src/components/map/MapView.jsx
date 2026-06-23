@@ -177,12 +177,27 @@ function PlaceItem({ place, existingLead, onPan, onAddLead, onViewLead, onVisit 
 }
 
 // ─── Painel lateral de resultados de categoria ─────────────────────────────
-function CategoryPanel({ results, leads, query, loading, onClose, onPanTo, onAddLead, onViewLead, onVisit }) {
+const PAGE_SIZE = 20
+
+function CategoryPanel({ results, leads, query, loading, page, onPageChange, onClose, onPanTo, onAddLead, onViewLead, onVisit }) {
   const [tab, setTab] = useState('todos')
 
-  const notInSystem  = results.filter(r => !matchLead(leads, r))
-  const inSystem     = results.filter(r =>  matchLead(leads, r))
-  const shown = tab === 'novos' ? notInSystem : tab === 'sistema' ? inSystem : results
+  const notInSystem = results.filter(r => !matchLead(leads, r))
+  const inSystem    = results.filter(r =>  matchLead(leads, r))
+  const filtered    = tab === 'novos' ? notInSystem : tab === 'sistema' ? inSystem : results
+
+  const totalPages  = Math.ceil(filtered.length / PAGE_SIZE) || 1
+  // garante que page não ultrapasse o total de páginas do filtro atual
+  const safePage    = Math.min(page, totalPages - 1)
+  const pageItems   = filtered.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE)
+
+  // Ao trocar de tab, volta para a página 1
+  function handleTab(id) {
+    setTab(id)
+    onPageChange(0)
+  }
+
+  const loadedPages = Math.ceil(results.length / PAGE_SIZE)
 
   return (
     <div className="absolute inset-x-0 bottom-0 z-30 flex flex-col bg-gray-950 border-t border-gray-800 rounded-t-3xl" style={{ maxHeight: '72vh' }}>
@@ -195,26 +210,34 @@ function CategoryPanel({ results, leads, query, loading, onClose, onPanTo, onAdd
       <div className="flex items-start justify-between px-4 py-3 flex-shrink-0">
         <div>
           <p className="text-white font-bold text-base">
-            {loading ? 'Buscando...' : `${results.length} resultado${results.length !== 1 ? 's' : ''}`}
+            {loading && results.length === 0
+              ? 'Buscando...'
+              : `${filtered.length} resultado${filtered.length !== 1 ? 's' : ''}${loading ? '…' : ''}`
+            }
           </p>
           <p className="text-gray-500 text-xs mt-0.5 truncate max-w-[220px]">"{query}"</p>
         </div>
-        <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400">
-          <X size={16} />
-        </button>
+        <div className="flex items-center gap-2">
+          {loading && results.length > 0 && (
+            <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+          )}
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400">
+            <X size={16} />
+          </button>
+        </div>
       </div>
 
-      {/* Tabs */}
+      {/* Tabs de filtro */}
       {results.length > 0 && (
-        <div className="flex gap-2 px-4 pb-3 flex-shrink-0">
+        <div className="flex gap-2 px-4 pb-3 flex-shrink-0 overflow-x-auto scrollbar-hide">
           {[
             { id: 'todos',   label: `Todos (${results.length})` },
-            { id: 'novos',   label: `Não prospectados (${notInSystem.length})` },
+            { id: 'novos',   label: `Novos (${notInSystem.length})` },
             { id: 'sistema', label: `No sistema (${inSystem.length})` },
           ].map(t => (
             <button
               key={t.id}
-              onClick={() => setTab(t.id)}
+              onClick={() => handleTab(t.id)}
               className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors ${
                 tab === t.id ? 'bg-orange-600 text-white' : 'bg-gray-800 text-gray-400'
               }`}
@@ -227,17 +250,17 @@ function CategoryPanel({ results, leads, query, loading, onClose, onPanTo, onAdd
 
       {/* Lista */}
       <div className="flex-1 overflow-y-auto">
-        {loading ? (
+        {loading && results.length === 0 ? (
           <div className="flex justify-center py-12">
             <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
           </div>
-        ) : shown.length === 0 ? (
+        ) : pageItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center px-6">
             <Search size={32} className="text-gray-700 mb-3" />
             <p className="text-gray-500 text-sm">Nenhum resultado nessa categoria</p>
           </div>
         ) : (
-          shown.map((place, i) => {
+          pageItems.map((place, i) => {
             const existing = matchLead(leads, place)
             return (
               <PlaceItem
@@ -254,14 +277,48 @@ function CategoryPanel({ results, leads, query, loading, onClose, onPanTo, onAdd
         )}
       </div>
 
-      {/* Legenda */}
-      {results.length > 0 && !loading && (
-        <div className="flex items-center gap-4 px-4 py-3 border-t border-gray-800 flex-shrink-0">
-          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-gray-600" /><span className="text-gray-500 text-[10px]">Não prospectado</span></div>
-          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-orange-500" /><span className="text-gray-500 text-[10px]">Interesse futuro</span></div>
-          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-green-500" /><span className="text-gray-500 text-[10px]">Reunião</span></div>
-        </div>
-      )}
+      {/* Rodapé: paginação + legenda */}
+      <div className="flex-shrink-0 border-t border-gray-800">
+        {/* Paginação */}
+        {(totalPages > 1 || loading) && (
+          <div className="flex items-center justify-center gap-2 px-4 py-2.5">
+            {Array.from({ length: Math.max(totalPages, loadedPages) }, (_, i) => {
+              const isLoaded   = i < loadedPages
+              const isActive   = i === safePage
+              const isLoadable = isLoaded
+              return (
+                <button
+                  key={i}
+                  disabled={!isLoadable}
+                  onClick={() => isLoadable && onPageChange(i)}
+                  className={`w-8 h-8 rounded-xl text-xs font-bold transition-colors flex items-center justify-center ${
+                    isActive
+                      ? 'bg-orange-600 text-white'
+                      : isLoaded
+                      ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                      : 'bg-gray-900 text-gray-600 cursor-not-allowed'
+                  }`}
+                  title={isLoaded ? `Página ${i + 1}` : 'Carregando...'}
+                >
+                  {isLoaded ? i + 1 : '·'}
+                </button>
+              )
+            })}
+            {loading && (
+              <div className="w-5 h-5 border-2 border-gray-600 border-t-orange-500 rounded-full animate-spin" />
+            )}
+          </div>
+        )}
+
+        {/* Legenda */}
+        {results.length > 0 && (
+          <div className="flex items-center gap-4 px-4 py-2.5">
+            <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-gray-600" /><span className="text-gray-500 text-[10px]">Não prospectado</span></div>
+            <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-orange-500" /><span className="text-gray-500 text-[10px]">Interesse futuro</span></div>
+            <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-green-500" /><span className="text-gray-500 text-[10px]">Reunião</span></div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -316,6 +373,7 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
   const [categoryQuery, setCategoryQuery]     = useState('')
   const [categoryLoading, setCategoryLoading] = useState(false)
   const [showCategoryPanel, setShowCategoryPanel] = useState(false)
+  const [categoryPage, setCategoryPage]       = useState(0)
 
   const { leads, loading } = useLeads(userId)
 
@@ -411,6 +469,7 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
     setCategoryQuery(query)
     setCategoryLoading(true)
     setCategoryResults([])
+    setCategoryPage(0)
     setShowCategoryPanel(true)
     setSearchResult(null)
     setSelectedLead(null)
@@ -674,6 +733,8 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
           leads={leads}
           query={categoryQuery}
           loading={categoryLoading}
+          page={categoryPage}
+          onPageChange={setCategoryPage}
           onClose={closeCategoryPanel}
           onPanTo={panToPlace}
           onAddLead={(place) => {
