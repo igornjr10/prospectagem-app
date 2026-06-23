@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+﻿import { useState, useMemo } from 'react'
 import {
   CalendarDays, CheckCircle2, Clock, Phone,
   MessageCircle, ChevronRight, AlarmClock,
@@ -39,7 +39,7 @@ function formatWeekDay(str) {
 
 // ─── Configuração de tipos de follow-up ───────────────────────────────────
 const TYPE_CONFIG = {
-  retornar:           { label: 'Retornar',         emoji: '🔁', color: 'text-blue-400',   bg: 'bg-blue-900/30  border-blue-800/50' },
+  retornar:           { label: 'Retornar',         emoji: '🔁', color: 'text-orange-400',   bg: 'bg-orange-900/30  border-orange-800/50' },
   enviar_proposta:    { label: 'Enviar proposta',   emoji: '📄', color: 'text-violet-400', bg: 'bg-violet-900/30 border-violet-800/50' },
   aguardar_retorno:   { label: 'Aguardar retorno',  emoji: '⏳', color: 'text-yellow-400', bg: 'bg-yellow-900/30 border-yellow-800/50' },
   cadencia_automatica:{ label: 'Cadência auto',     emoji: '🤖', color: 'text-gray-400',   bg: 'bg-gray-800/50  border-gray-700/50' },
@@ -158,7 +158,7 @@ function FollowUpCard({ fu, onComplete, onSnooze, onVisit }) {
             {/* Registrar visita */}
             <button
               onClick={(e) => { e.stopPropagation(); onVisit(est) }}
-              className="flex-1 flex items-center justify-center gap-1.5 bg-blue-700 hover:bg-blue-600 text-white text-xs font-medium py-2.5 rounded-xl transition-colors"
+              className="flex-1 flex items-center justify-center gap-1.5 bg-orange-700 hover:bg-orange-600 text-white text-xs font-medium py-2.5 rounded-xl transition-colors"
             >
               <Building2 size={14} />
               Visitar
@@ -326,7 +326,7 @@ export default function AgendaView({ userId, onVisit }) {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-medium transition-colors ${
                   active
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-orange-600 text-white'
                     : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
                 }`}
               >
@@ -334,7 +334,7 @@ export default function AgendaView({ userId, onVisit }) {
                 {count > 0 && (
                   <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
                     active
-                      ? 'bg-blue-400/30 text-white'
+                      ? 'bg-orange-400/30 text-white'
                       : tab.id === 'vencidos'
                       ? 'bg-red-900/60 text-red-400'
                       : 'bg-gray-700 text-gray-400'
@@ -352,7 +352,7 @@ export default function AgendaView({ userId, onVisit }) {
       <div className="flex-1 overflow-y-auto px-4 py-4">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-7 h-7 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-7 h-7 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : sortedDates.length === 0 ? (
           <EmptyState tab={activeTab} />

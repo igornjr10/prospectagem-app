@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Map, CalendarDays, LayoutDashboard, List } from 'lucide-react'
 import { supabase } from './lib/supabase'
 import MapView from './components/map/MapView'
@@ -49,7 +49,7 @@ export default function App() {
   if (authLoading) {
     return (
       <div className="h-screen w-screen bg-gray-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -130,7 +130,7 @@ export default function App() {
                 key={id}
                 onClick={() => setActivePage(id)}
                 className={`flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-colors ${
-                  active ? 'text-blue-400' : 'text-gray-500 hover:text-gray-300'
+                  active ? 'text-orange-400' : 'text-gray-500 hover:text-gray-300'
                 }`}
               >
                 <Icon size={22} strokeWidth={active ? 2.5 : 1.8} />
@@ -163,7 +163,7 @@ function LoginScreen() {
     <div className="h-screen w-screen bg-gray-950 flex flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 bg-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Map size={28} className="text-white" />
           </div>
           <h1 className="text-white text-xl font-semibold">Prospectagem</h1>
@@ -176,7 +176,7 @@ function LoginScreen() {
             placeholder="E-mail"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500"
+            className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-500"
           />
           <input
             type="password"
@@ -184,13 +184,13 @@ function LoginScreen() {
             value={password}
             onChange={e => setPassword(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleLogin()}
-            className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500"
+            className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-500"
           />
           {error && <p className="text-red-400 text-xs text-center">{error}</p>}
           <button
             onClick={handleLogin}
             disabled={loading || !email || !password}
-            className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-medium py-3 rounded-xl text-sm transition-colors"
+            className="w-full bg-orange-600 hover:bg-orange-500 disabled:opacity-50 text-white font-medium py-3 rounded-xl text-sm transition-colors"
           >
             {loading ? 'Entrando...' : 'Entrar'}
           </button>

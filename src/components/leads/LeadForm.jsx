@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { X, MapPin, User, Phone, Building2, Tag, Loader2, CheckCircle2 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 
@@ -23,7 +23,7 @@ function Field({ label, children, required }) {
   return (
     <div>
       <label className="block text-xs font-medium text-gray-400 mb-1.5">
-        {label}{required && <span className="text-blue-400 ml-0.5">*</span>}
+        {label}{required && <span className="text-orange-400 ml-0.5">*</span>}
       </label>
       {children}
     </div>
@@ -40,7 +40,7 @@ function Input({ icon: Icon, ...props }) {
       )}
       <input
         {...props}
-        className={`w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors ${Icon ? 'pl-9 pr-4' : 'px-4'}`}
+        className={`w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl py-3 text-sm focus:outline-none focus:border-orange-500 transition-colors ${Icon ? 'pl-9 pr-4' : 'px-4'}`}
       />
     </div>
   )
@@ -56,7 +56,7 @@ function SelectGrid({ options, value, onChange }) {
           onClick={() => onChange(opt.value)}
           className={`px-3 py-2.5 rounded-xl text-sm text-left transition-colors border ${
             value === opt.value
-              ? 'bg-blue-600 border-blue-500 text-white'
+              ? 'bg-orange-600 border-orange-500 text-white'
               : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-500'
           }`}
         >
@@ -198,7 +198,7 @@ export default function LeadForm({ coords, prefill, userId, onSave, onClose }) {
                 onClick={() => set('source')(opt.value)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors border ${
                   form.source === opt.value
-                    ? 'bg-blue-600 border-blue-500 text-white'
+                    ? 'bg-orange-600 border-orange-500 text-white'
                     : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500'
                 }`}
               >
@@ -214,7 +214,7 @@ export default function LeadForm({ coords, prefill, userId, onSave, onClose }) {
             placeholder="Qualquer informação relevante sobre o estabelecimento..."
             value={form.notes}
             onChange={set('notes')}
-            className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors resize-none"
+            className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-500 transition-colors resize-none"
           />
         </Field>
 
@@ -237,7 +237,7 @@ export default function LeadForm({ coords, prefill, userId, onSave, onClose }) {
             saved
               ? 'bg-green-600 text-white'
               : isValid
-              ? 'bg-blue-600 hover:bg-blue-500 text-white active:scale-98'
+              ? 'bg-orange-600 hover:bg-orange-500 text-white active:scale-98'
               : 'bg-gray-800 text-gray-500 cursor-not-allowed'
           }`}
         >

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+﻿import { useState, useEffect, useCallback } from 'react'
 import {
   X, Phone, MessageCircle, ClipboardList, MapPin,
   Star, Calendar, Clock,
@@ -13,7 +13,7 @@ const EVO_INSTANCE = import.meta.env.VITE_EVOLUTION_INSTANCE
 
 // ─── Configs ───────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
-  nao_visitado:     { label: 'Não visitado',     color: '#3B82F6', bg: 'bg-blue-500' },
+  nao_visitado:     { label: 'Não visitado',     color: '#6B7280', bg: 'bg-gray-500' },
   sem_interesse:    { label: 'Sem interesse',     color: '#EAB308', bg: 'bg-yellow-500' },
   interesse_futuro: { label: 'Interesse futuro',  color: '#F97316', bg: 'bg-orange-500' },
   reuniao_agendada: { label: 'Reunião agendada',  color: '#22C55E', bg: 'bg-green-500' },
@@ -112,7 +112,7 @@ function LeadEditPanel({ lead, onClose, onSaved }) {
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-xl px-4 py-3 focus:border-blue-500 focus:outline-none placeholder-gray-500"
+          className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-xl px-4 py-3 focus:border-orange-500 focus:outline-none placeholder-gray-500"
         />
       </div>
     )
@@ -147,7 +147,7 @@ function LeadEditPanel({ lead, onClose, onSaved }) {
                   onClick={() => setForm(p => ({ ...p, type: t.value }))}
                   className={`px-3 py-2.5 rounded-xl text-xs text-left border transition-colors ${
                     form.type === t.value
-                      ? 'bg-blue-600 border-blue-500 text-white'
+                      ? 'bg-orange-600 border-orange-500 text-white'
                       : 'bg-gray-800 border-gray-700 text-gray-300'
                   }`}
                 >
@@ -192,7 +192,7 @@ function LeadEditPanel({ lead, onClose, onSaved }) {
               onChange={set('notes')}
               placeholder="Anotações sobre o lead..."
               rows={3}
-              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-xl px-4 py-3 focus:border-blue-500 focus:outline-none placeholder-gray-500 resize-none"
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-xl px-4 py-3 focus:border-orange-500 focus:outline-none placeholder-gray-500 resize-none"
             />
           </div>
 
@@ -208,7 +208,7 @@ function LeadEditPanel({ lead, onClose, onSaved }) {
           <button
             onClick={handleSave}
             disabled={saving || !form.name.trim()}
-            className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-semibold py-3.5 rounded-2xl text-sm flex items-center justify-center gap-2 transition-colors"
+            className="w-full bg-orange-600 hover:bg-orange-500 disabled:opacity-40 text-white font-semibold py-3.5 rounded-2xl text-sm flex items-center justify-center gap-2 transition-colors"
           >
             {saving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
             {saving ? 'Salvando...' : 'Salvar alterações'}
@@ -313,7 +313,7 @@ function VisitCard({ visit, isFirst }) {
   return (
     <div className="relative pl-8">
       <div className="absolute left-3 top-5 bottom-0 w-px bg-gray-800" />
-      <div className={`absolute left-1.5 top-3 w-3 h-3 rounded-full border-2 ${isFirst ? 'bg-blue-500 border-blue-400' : 'bg-gray-700 border-gray-600'}`} />
+      <div className={`absolute left-1.5 top-3 w-3 h-3 rounded-full border-2 ${isFirst ? 'bg-orange-500 border-orange-400' : 'bg-gray-700 border-gray-600'}`} />
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 mb-3">
         <div className="flex items-start justify-between gap-2 mb-2">
           <div>
@@ -339,10 +339,10 @@ function VisitCard({ visit, isFirst }) {
         </div>
         {visit.next_step && visit.next_step !== 'nenhum' && (
           <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-1">
-            <Calendar size={11} className="text-blue-400" />
+            <Calendar size={11} className="text-orange-400" />
             <span>Próximo: {NEXT_STEP_LABEL[visit.next_step]}</span>
             {visit.next_contact_date && (
-              <span className="text-blue-400">· {new Date(visit.next_contact_date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>
+              <span className="text-orange-400">· {new Date(visit.next_contact_date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>
             )}
           </div>
         )}
@@ -379,7 +379,7 @@ function WaMsgCard({ msg }) {
       </div>
       <p className={`text-gray-400 text-xs mt-2 ${expanded ? '' : 'line-clamp-2'}`}>{msg.content}</p>
       {msg.content?.length > 80 && (
-        <button onClick={() => setExpanded(!expanded)} className="text-blue-400 text-[10px] mt-1">
+        <button onClick={() => setExpanded(!expanded)} className="text-orange-400 text-[10px] mt-1">
           {expanded ? 'ver menos' : 'ver mais'}
         </button>
       )}
@@ -632,7 +632,7 @@ export default function LeadProfile({ lead: initialLead, userId, onClose, onVisi
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={() => setShowEditPanel(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-orange-600 hover:text-white transition-colors"
             title="Editar lead"
           >
             <Pencil size={16} />
@@ -672,11 +672,11 @@ export default function LeadProfile({ lead: initialLead, userId, onClose, onVisi
           </div>
         </div>
         {lead.next_follow_up && (
-          <div className="bg-blue-950/50 border border-blue-800/50 rounded-xl px-3 py-2.5 flex items-center gap-2">
-            <Calendar size={14} className="text-blue-400 flex-shrink-0" />
+          <div className="bg-orange-950/50 border border-orange-800/50 rounded-xl px-3 py-2.5 flex items-center gap-2">
+            <Calendar size={14} className="text-orange-400 flex-shrink-0" />
             <div>
-              <p className="text-blue-300 text-xs font-medium">Próximo follow-up</p>
-              <p className="text-blue-400 text-xs">{formatDate(lead.next_follow_up)}</p>
+              <p className="text-orange-300 text-xs font-medium">Próximo follow-up</p>
+              <p className="text-orange-400 text-xs">{formatDate(lead.next_follow_up)}</p>
             </div>
           </div>
         )}
@@ -689,7 +689,7 @@ export default function LeadProfile({ lead: initialLead, userId, onClose, onVisi
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs font-medium transition-colors ${
-              activeTab === tab.id ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              activeTab === tab.id ? 'bg-orange-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
             }`}
           >
             {tab.label}
@@ -705,7 +705,7 @@ export default function LeadProfile({ lead: initialLead, userId, onClose, onVisi
           <div className="px-4 pt-4 pb-8">
             {loadingVisits ? (
               <div className="flex justify-center py-12">
-                <div className="w-7 h-7 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-7 h-7 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : visits.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -741,8 +741,8 @@ export default function LeadProfile({ lead: initialLead, userId, onClose, onVisi
               <h3 className="text-gray-400 text-xs font-semibold uppercase tracking-wide">Contato</h3>
               {lead.contact_name && (
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-blue-900/40 flex items-center justify-center flex-shrink-0">
-                    <Building2 size={14} className="text-blue-400" />
+                  <div className="w-8 h-8 rounded-full bg-orange-900/40 flex items-center justify-center flex-shrink-0">
+                    <Building2 size={14} className="text-orange-400" />
                   </div>
                   <div>
                     <p className="text-white text-sm font-medium">{lead.contact_name}</p>
@@ -795,7 +795,7 @@ export default function LeadProfile({ lead: initialLead, userId, onClose, onVisi
         </button>
         <button
           onClick={() => onVisit?.(lead)}
-          className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3.5 rounded-2xl text-sm flex items-center justify-center gap-2 transition-colors active:scale-[0.98]"
+          className="flex-1 bg-orange-600 hover:bg-orange-500 text-white font-semibold py-3.5 rounded-2xl text-sm flex items-center justify-center gap-2 transition-colors active:scale-[0.98]"
         >
           <ClipboardList size={17} />
           Registrar visita

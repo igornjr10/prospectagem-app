@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
   X, CheckCircle2, Loader2, MessageCircle,
   CalendarDays, ChevronDown, ChevronUp, Car, DollarSign, User
@@ -221,7 +221,7 @@ export default function VisitForm({ lead, userId, sellerName = 'Vendedor', onSav
         {/* Resultado */}
         <div>
           <label className="block text-xs font-medium text-gray-400 mb-2">
-            Resultado da visita <span className="text-blue-400">*</span>
+            Resultado da visita <span className="text-orange-400">*</span>
           </label>
           <div className="grid grid-cols-2 gap-2">
             {RESULTADOS.map(r => (
@@ -238,7 +238,7 @@ export default function VisitForm({ lead, userId, sellerName = 'Vendedor', onSav
         {/* Próximo passo */}
         <div>
           <label className="block text-xs font-medium text-gray-400 mb-2">
-            Próximo passo <span className="text-blue-400">*</span>
+            Próximo passo <span className="text-orange-400">*</span>
           </label>
           <div className="space-y-2">
             {PROXIMOS_PASSOS.map(p => (
@@ -248,7 +248,7 @@ export default function VisitForm({ lead, userId, sellerName = 'Vendedor', onSav
                 onClick={() => setNextStep(p.value)}
                 className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all ${
                   nextStep === p.value
-                    ? 'bg-gray-700 border-blue-500 text-white'
+                    ? 'bg-gray-700 border-orange-500 text-white'
                     : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
                 }`}
               >
@@ -269,7 +269,7 @@ export default function VisitForm({ lead, userId, sellerName = 'Vendedor', onSav
               value={nextContactDate}
               min={new Date().toISOString().split('T')[0]}
               onChange={e => setNextContactDate(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-500 transition-colors"
             />
           </div>
         )}
@@ -321,7 +321,7 @@ export default function VisitForm({ lead, userId, sellerName = 'Vendedor', onSav
                     placeholder="Nome de quem você conversou"
                     value={personMet}
                     onChange={e => setPersonMet(e.target.value)}
-                    className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-orange-500 transition-colors"
                   />
                 </div>
               </div>
@@ -336,7 +336,7 @@ export default function VisitForm({ lead, userId, sellerName = 'Vendedor', onSav
                     placeholder="Ex: Renault Oroch, caminhão baú"
                     value={vehicleInterest}
                     onChange={e => setVehicleInterest(e.target.value)}
-                    className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-orange-500 transition-colors"
                   />
                 </div>
               </div>
@@ -351,7 +351,7 @@ export default function VisitForm({ lead, userId, sellerName = 'Vendedor', onSav
                     placeholder="0,00"
                     value={estimatedValue}
                     onChange={e => setEstimatedValue(e.target.value)}
-                    className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-orange-500 transition-colors"
                   />
                 </div>
               </div>
@@ -364,7 +364,7 @@ export default function VisitForm({ lead, userId, sellerName = 'Vendedor', onSav
                   placeholder="O que foi conversado, observações importantes..."
                   value={notes}
                   onChange={e => setNotes(e.target.value)}
-                  className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors resize-none"
+                  className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-500 transition-colors resize-none"
                 />
               </div>
             </div>
@@ -389,7 +389,7 @@ export default function VisitForm({ lead, userId, sellerName = 'Vendedor', onSav
             saved
               ? 'bg-green-600 text-white'
               : isValid
-              ? 'bg-blue-600 hover:bg-blue-500 text-white active:scale-98'
+              ? 'bg-orange-600 hover:bg-orange-500 text-white active:scale-98'
               : 'bg-gray-800 text-gray-500 cursor-not-allowed'
           }`}
         >

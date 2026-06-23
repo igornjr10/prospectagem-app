@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+﻿import { useEffect, useRef, useState, useCallback } from 'react'
 import { Loader } from '@googlemaps/js-api-loader'
 import {
   Plus, LocateFixed, X, Phone, MessageCircle,
@@ -7,7 +7,7 @@ import {
 import { useLeads } from '../../hooks/useLeads'
 
 const STATUS_CONFIG = {
-  nao_visitado:     { label: 'Não visitado',      color: '#3B82F6', bg: 'bg-blue-500' },
+  nao_visitado:     { label: 'Não visitado',      color: '#6B7280', bg: 'bg-gray-500' },
   sem_interesse:    { label: 'Sem interesse',      color: '#EAB308', bg: 'bg-yellow-500' },
   interesse_futuro: { label: 'Interesse futuro',   color: '#F97316', bg: 'bg-orange-500' },
   reuniao_agendada: { label: 'Reunião agendada',   color: '#22C55E', bg: 'bg-green-500' },
@@ -74,7 +74,7 @@ function LeadCard({ lead, onClose, onVisit, onProfile }) {
         </div>
       )}
       <div className="flex gap-2">
-        <button onClick={() => onVisit(lead)} className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium py-2.5 rounded-xl transition-colors">
+        <button onClick={() => onVisit(lead)} className="flex-1 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-500 text-white text-sm font-medium py-2.5 rounded-xl transition-colors">
           <ClipboardList size={15} /> Registrar visita
         </button>
         <button onClick={() => onProfile?.(lead)} className="w-10 h-10 flex items-center justify-center bg-gray-700 hover:bg-gray-600 rounded-xl text-gray-300 transition-colors"><User size={16} /></button>
@@ -113,7 +113,7 @@ function SearchResultCard({ result, existingLead, onAddLead, onViewLead, onClose
       <div className="flex gap-2">
         {existingLead ? (
           <>
-            <button onClick={() => onViewLead(existingLead)} className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium py-2.5 rounded-xl"><User size={15} /> Ver lead</button>
+            <button onClick={() => onViewLead(existingLead)} className="flex-1 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-500 text-white text-sm font-medium py-2.5 rounded-xl"><User size={15} /> Ver lead</button>
             <button onClick={() => onAddLead(existingLead)} className="flex-1 flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium py-2.5 rounded-xl"><ClipboardList size={15} /> Visita</button>
           </>
         ) : (
@@ -160,7 +160,7 @@ function PlaceItem({ place, existingLead, onPan, onAddLead, onViewLead, onVisit 
       {existingLead ? (
         <button
           onClick={e => { e.stopPropagation(); onVisit(existingLead) }}
-          className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-blue-700/40 border border-blue-700/60 rounded-xl text-blue-400"
+          className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-orange-700/40 border border-orange-700/60 rounded-xl text-orange-400"
         >
           <ClipboardList size={14} />
         </button>
@@ -216,7 +216,7 @@ function CategoryPanel({ results, leads, query, loading, onClose, onPanTo, onAdd
               key={t.id}
               onClick={() => setTab(t.id)}
               className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors ${
-                tab === t.id ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400'
+                tab === t.id ? 'bg-orange-600 text-white' : 'bg-gray-800 text-gray-400'
               }`}
             >
               {t.label}
@@ -229,7 +229,7 @@ function CategoryPanel({ results, leads, query, loading, onClose, onPanTo, onAdd
       <div className="flex-1 overflow-y-auto">
         {loading ? (
           <div className="flex justify-center py-12">
-            <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : shown.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center px-6">
@@ -575,7 +575,7 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
               onKeyDown={e => {
                 if (e.key === 'Enter') { e.preventDefault(); handleCategorySearch() }
               }}
-              className="w-full bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-2xl pl-10 pr-9 py-3 text-sm focus:outline-none focus:border-blue-500 shadow-xl transition-colors"
+              className="w-full bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-2xl pl-10 pr-9 py-3 text-sm focus:outline-none focus:border-orange-500 shadow-xl transition-colors"
             />
             {(searchFocused || searchResult || showCategoryPanel) && (
               <button
@@ -589,7 +589,7 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
           {/* Botão buscar categoria */}
           <button
             onMouseDown={e => { e.preventDefault(); handleCategorySearch() }}
-            className="flex-shrink-0 w-11 h-11 bg-blue-600 hover:bg-blue-500 rounded-2xl flex items-center justify-center shadow-xl transition-colors"
+            className="flex-shrink-0 w-11 h-11 bg-orange-600 hover:bg-orange-500 rounded-2xl flex items-center justify-center shadow-xl transition-colors"
             title="Buscar todos os estabelecimentos"
           >
             <Search size={18} className="text-white" />
@@ -616,11 +616,11 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
 
       {/* Botão localização */}
       <button onClick={centerOnUser} className="absolute right-3 bottom-40 z-10 w-12 h-12 bg-gray-900 border border-gray-700 rounded-full flex items-center justify-center shadow-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all active:scale-95">
-        <LocateFixed size={20} className={locating ? 'animate-pulse text-blue-400' : ''} />
+        <LocateFixed size={20} className={locating ? 'animate-pulse text-orange-400' : ''} />
       </button>
 
       {/* Botão novo lead */}
-      <button onClick={handleNewLead} className="absolute right-3 bottom-24 z-10 w-14 h-14 bg-blue-600 hover:bg-blue-500 rounded-full flex items-center justify-center shadow-xl transition-all active:scale-95">
+      <button onClick={handleNewLead} className="absolute right-3 bottom-24 z-10 w-14 h-14 bg-orange-600 hover:bg-orange-500 rounded-full flex items-center justify-center shadow-xl transition-all active:scale-95">
         <Plus size={26} className="text-white" />
       </button>
 
@@ -670,7 +670,7 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
       {/* Loading */}
       {loading && (
         <div className="absolute inset-0 z-30 flex items-center justify-center bg-gray-950/60 pointer-events-none">
-          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
     </div>

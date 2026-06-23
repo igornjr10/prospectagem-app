@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
   Search, SlidersHorizontal, X, Star, Phone,
   MessageCircle, ClipboardList, ChevronDown,
@@ -8,7 +8,7 @@ import { useLeadList } from '../../hooks/useLeadList'
 
 // ─── Configurações ─────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
-  nao_visitado:     { label: 'Não visitado',     color: '#3B82F6', dot: 'bg-blue-500' },
+  nao_visitado:     { label: 'Não visitado',     color: '#6B7280', dot: 'bg-gray-500' },
   sem_interesse:    { label: 'Sem interesse',     color: '#EAB308', dot: 'bg-yellow-500' },
   interesse_futuro: { label: 'Interesse futuro',  color: '#F97316', dot: 'bg-orange-500' },
   reuniao_agendada: { label: 'Reunião agendada',  color: '#22C55E', dot: 'bg-green-500' },
@@ -78,7 +78,7 @@ function FilterDrawer({ open, onClose, filterStatus, setFilterStatus, filterType
             {hasFilters && (
               <button
                 onClick={() => { setFilterStatus([]); setFilterType([]) }}
-                className="text-blue-400 text-xs font-medium"
+                className="text-orange-400 text-xs font-medium"
               >
                 Limpar
               </button>
@@ -102,7 +102,7 @@ function FilterDrawer({ open, onClose, filterStatus, setFilterStatus, filterType
                 onClick={() => setSortBy(opt.value)}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-sm transition-colors ${
                   sortBy === opt.value
-                    ? 'bg-blue-600 border-blue-500 text-white'
+                    ? 'bg-orange-600 border-orange-500 text-white'
                     : 'bg-gray-800 border-gray-700 text-gray-300'
                 }`}
               >
@@ -145,7 +145,7 @@ function FilterDrawer({ open, onClose, filterStatus, setFilterStatus, filterType
                 onClick={() => toggleType(key)}
                 className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm transition-colors ${
                   filterType.includes(key)
-                    ? 'bg-blue-600 border-blue-500 text-white'
+                    ? 'bg-orange-600 border-orange-500 text-white'
                     : 'bg-gray-800 border-gray-700 text-gray-300'
                 }`}
               >
@@ -158,7 +158,7 @@ function FilterDrawer({ open, onClose, filterStatus, setFilterStatus, filterType
 
         <button
           onClick={onClose}
-          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3.5 rounded-2xl text-sm transition-colors"
+          className="w-full bg-orange-600 hover:bg-orange-500 text-white font-semibold py-3.5 rounded-2xl text-sm transition-colors"
         >
           Aplicar
         </button>
@@ -237,7 +237,7 @@ function LeadCard({ lead, onVisit }) {
       <div className="flex gap-2">
         <button
           onClick={() => onVisit(lead)}
-          className="flex-1 flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium py-2.5 rounded-xl transition-colors"
+          className="flex-1 flex items-center justify-center gap-1.5 bg-orange-600 hover:bg-orange-500 text-white text-xs font-medium py-2.5 rounded-xl transition-colors"
         >
           <ClipboardList size={13} />
           Registrar visita
@@ -294,7 +294,7 @@ export default function LeadList({ userId, onVisit, onNewLead }) {
           </div>
           <button
             onClick={onNewLead}
-            className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-colors"
+            className="flex items-center gap-1.5 bg-orange-600 hover:bg-orange-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-colors"
           >
             + Novo lead
           </button>
@@ -309,7 +309,7 @@ export default function LeadList({ userId, onVisit, onNewLead }) {
               placeholder="Buscar por nome, contato..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 transition-colors"
             />
             {search && (
               <button
@@ -324,7 +324,7 @@ export default function LeadList({ userId, onVisit, onNewLead }) {
             onClick={() => setShowFilters(true)}
             className={`w-11 h-11 flex items-center justify-center rounded-xl border transition-colors relative ${
               hasActiveFilters
-                ? 'bg-blue-600 border-blue-500 text-white'
+                ? 'bg-orange-600 border-orange-500 text-white'
                 : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500'
             }`}
           >
@@ -365,7 +365,7 @@ export default function LeadList({ userId, onVisit, onNewLead }) {
                 <p className="text-gray-500 text-sm">Tente outros filtros ou termos de busca</p>
                 <button
                   onClick={() => { setSearch(''); setFilterStatus([]); setFilterType([]) }}
-                  className="mt-4 text-blue-400 text-sm font-medium"
+                  className="mt-4 text-orange-400 text-sm font-medium"
                 >
                   Limpar filtros
                 </button>
@@ -376,7 +376,7 @@ export default function LeadList({ userId, onVisit, onNewLead }) {
                 <p className="text-gray-500 text-sm mb-4">Cadastre o primeiro pelo mapa</p>
                 <button
                   onClick={onNewLead}
-                  className="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                  className="bg-orange-600 hover:bg-orange-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                 >
                   + Novo lead
                 </button>

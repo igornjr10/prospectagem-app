@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
   TrendingUp, Users, CalendarCheck, Trophy,
   MessageCircle, Star, ChevronRight, RefreshCw,
@@ -15,7 +15,7 @@ function formatCurrency(value) {
 }
 
 const STATUS_CONFIG = {
-  naoVisitado:     { label: 'Não visitado',     color: '#3B82F6' },
+  naoVisitado:     { label: 'Não visitado',     color: '#6B7280' },
   interesseFuturo: { label: 'Interesse futuro',  color: '#F97316' },
   reuniaoAgendada: { label: 'Reunião agendada',  color: '#22C55E' },
   propostaEnviada: { label: 'Proposta enviada',  color: '#8B5CF6' },
@@ -234,12 +234,12 @@ export default function Dashboard({ userId, onVisit }) {
 
             {/* Pipeline em valor */}
             {m.pipelineValue > 0 && (
-              <div className="bg-gradient-to-r from-blue-950 to-violet-950 border border-blue-800/40 rounded-2xl px-4 py-3 flex items-center justify-between">
+              <div className="bg-gradient-to-r from-orange-950 to-violet-950 border border-orange-800/40 rounded-2xl px-4 py-3 flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-xs">Em pipeline</p>
                   <p className="text-white font-bold text-2xl mt-0.5">{formatCurrency(m.pipelineValue)}</p>
                 </div>
-                <Flame size={28} className="text-blue-400 opacity-60" />
+                <Flame size={28} className="text-orange-400 opacity-60" />
               </div>
             )}
 
@@ -250,7 +250,7 @@ export default function Dashboard({ userId, onVisit }) {
                   label="Não visitados"
                   value={m.naoVisitado}
                   total={m.total}
-                  color="#3B82F6"
+                  color="#6B7280"
                 />
                 <FunnelBar
                   label="Interesse futuro"
@@ -305,7 +305,7 @@ export default function Dashboard({ userId, onVisit }) {
                         <div className="flex items-center gap-2">
                           <div className="w-24 h-1.5 bg-gray-800 rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-blue-500 rounded-full"
+                              className="h-full bg-orange-500 rounded-full"
                               style={{ width: `${Math.round((count / m.total) * 100)}%` }}
                             />
                           </div>
