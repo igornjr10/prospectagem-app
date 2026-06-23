@@ -421,7 +421,6 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
     categoryMarkersRef.current.forEach(m => m.setMap(null))
     categoryMarkersRef.current = []
 
-    const bounds = new window.google.maps.LatLngBounds(IMPERATRIZ_BOUNDS.sw, IMPERATRIZ_BOUNDS.ne)
     const allMapped = []
 
     function addMarkers(places) {
@@ -484,7 +483,11 @@ export default function MapView({ userId, onNewLead, onVisit, onProfile }) {
     }
 
     placesServiceRef.current.textSearch(
-      { query: `${query} Imperatriz Maranhão`, bounds },
+      {
+        query: `${query} Imperatriz Maranhão`,
+        location: new window.google.maps.LatLng(IMPERATRIZ_CENTER.lat, IMPERATRIZ_CENTER.lng),
+        radius: 20000,
+      },
       handlePage
     )
   }, [leads])
