@@ -359,32 +359,77 @@ function VisitCard({ visit, isFirst }) {
   )
 }
 
-// ─── WaMsgCard ─────────────────────────────────────────────────────────────
-function WaMsgCard({ msg }) {
-  const [expanded, setExpanded] = useState(false)
-  const statusIcon = msg.status === 'sent' || msg.status === 'delivered' || msg.status === 'read'
-    ? <CheckCheck size={13} className="text-green-400" />
-    : msg.status === 'failed'
-    ? <AlertCircle size={13} className="text-red-400" />
-    : <Clock size={13} className="text-gray-400" />
+// ─── helpers de chat ───────────────────────────────────────────────────────
+function formatChatTime(iso) {
+  if (!iso) return ''
+  return new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+}
+
+function formatChatDate(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  const today    = new Date()
+  const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1)
+  if (d.toDateString() === today.toDateString())     return 'Hoje'
+  if (d.toDateString() === yesterday.toDateString()) return 'Ontem'
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+}
+
+function isSameDay(a, b) {
+  return new Date(a).toDateString() === new Date(b).toDateString()
+}
+
+// ─── WaBubble ──────────────────────────────────────────────────────────────
+function WaBubble({ msg, showDate }) {
+  const statusIcon =
+    msg.status === 'read'      ? <CheckCheck size={12} className="text-sky-400" /> :
+    msg.status === 'delivered' ? <CheckCheck size={12} className="text-green-300/70" /> :
+    msg.status === 'sent'      ? <CheckCheck size={12} className="text-green-300/50" /> :
+    msg.status === 'failed'    ? <AlertCircle size={12} className="text-red-400" /> :
+                                 <Clock size={12} className="text-green-300/40" />
 
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 mb-3">
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2">
-          {statusIcon}
-          <span className="text-white text-xs font-medium">{msg.template_used}</span>
+    <>
+      {showDate && (
+        <div className="flex justify-center my-3">
+          <span className="bg-[#182229] text-gray-400 text-[10px] px-3 py-1 rounded-full border border-gray-800">
+            {formatChatDate(msg.sent_at)}
+          </span>
         </div>
-        <span className="text-gray-500 text-[10px] flex-shrink-0">{timeAgo(msg.sent_at)}</span>
-      </div>
-      <p className={`text-gray-400 text-xs mt-2 ${expanded ? '' : 'line-clamp-2'}`}>{msg.content}</p>
-      {msg.content?.length > 80 && (
-        <button onClick={() => setExpanded(!expanded)} className="text-orange-400 text-[10px] mt-1">
-          {expanded ? 'ver menos' : 'ver mais'}
-        </button>
       )}
-      <p className="text-gray-600 text-[10px] mt-1.5 font-mono">{msg.phone_number}</p>
-    </div>
+      <div className="flex justify-end mb-1.5 px-3">
+        <div className="max-w-[82%]">
+          {msg.template_used && (
+            <p className="text-green-400/70 text-[10px] italic text-right mb-0.5 pr-1">{msg.template_used}</p>
+          )}
+          {/* Bolha */}
+          <div className="relative bg-[#005C4B] rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-[5px] px-3.5 py-2.5 shadow-md">
+            {/* Tail SVG */}
+            <svg
+              className="absolute bottom-0 right-[-6px]"
+              width="8" height="13" viewBox="0 0 8 13" fill="none"
+            >
+              <path d="M0 13 C0 13 1 6 8 0 L8 13 Z" fill="#005C4B" />
+            </svg>
+
+            <p className="text-[#E9FEEA] text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+
+            {/* Rodapé: hora + status */}
+            <div className="flex items-center justify-end gap-1 mt-1.5">
+              <span className="text-green-200/50 text-[10px]">{formatChatTime(msg.sent_at)}</span>
+              {statusIcon}
+            </div>
+          </div>
+
+          {/* Telefone */}
+          {msg.phone_number && (
+            <p className="text-gray-600 text-[9px] text-right mt-0.5 pr-1 font-mono">
+              {msg.phone_number}
+            </p>
+          )}
+        </div>
+      </div>
+    </>
   )
 }
 
@@ -698,7 +743,7 @@ export default function LeadProfile({ lead: initialLead, userId, onClose, onVisi
       </div>
 
       {/* Conteúdo */}
-      <div className="flex-1 overflow-y-auto">
+      <div className={`flex-1 min-h-0 ${activeTab === 'whatsapp' ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'}`}>
 
         {/* Histórico */}
         {activeTab === 'historico' && (
@@ -721,16 +766,48 @@ export default function LeadProfile({ lead: initialLead, userId, onClose, onVisi
 
         {/* WhatsApp */}
         {activeTab === 'whatsapp' && (
-          <div className="px-4 pt-4 pb-8">
-            {waMsgs.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
-                <MessageCircle size={36} className="text-gray-700 mb-3" />
-                <p className="text-white font-semibold text-sm mb-1">Nenhuma mensagem enviada</p>
-                <p className="text-gray-500 text-xs">Toque em "Enviar WhatsApp" para enviar a primeira mensagem</p>
-              </div>
-            ) : (
-              waMsgs.map(msg => <WaMsgCard key={msg.id} msg={msg} />)
-            )}
+          <div className="flex flex-col flex-1 min-h-0 bg-[#0B141A]">
+            {/* Área de mensagens */}
+            <div className="flex-1 overflow-y-auto py-3">
+              {waMsgs.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full py-16 text-center px-6">
+                  <div className="w-16 h-16 rounded-full bg-green-900/20 border border-green-900/40 flex items-center justify-center mb-4">
+                    <MessageCircle size={28} className="text-green-600" />
+                  </div>
+                  <p className="text-gray-300 font-semibold text-sm mb-1">Nenhuma mensagem</p>
+                  <p className="text-gray-600 text-xs">Toque em "Nova mensagem" para começar a conversa</p>
+                </div>
+              ) : (
+                <>
+                  {/* Renderiza em ordem cronológica (mais antigas no topo) */}
+                  {[...waMsgs].reverse().map((msg, i, arr) => (
+                    <WaBubble
+                      key={msg.id}
+                      msg={msg}
+                      showDate={i === 0 || !isSameDay(arr[i - 1].sent_at, msg.sent_at)}
+                    />
+                  ))}
+                  <div className="h-2" />
+                </>
+              )}
+            </div>
+
+            {/* Barra de compor */}
+            <div className="flex-shrink-0 flex items-center gap-2 px-3 py-2.5 bg-[#1F2C34] border-t border-[#2A3942]">
+              <button
+                onClick={() => setShowWaPanel(true)}
+                className="flex-1 flex items-center gap-2 bg-[#2A3942] hover:bg-[#3B4A54] text-gray-400 text-sm px-4 py-2.5 rounded-full transition-colors"
+              >
+                <MessageCircle size={16} className="text-green-500 flex-shrink-0" />
+                <span className="text-[13px]">Nova mensagem…</span>
+              </button>
+              <button
+                onClick={() => setShowWaPanel(true)}
+                className="w-10 h-10 flex items-center justify-center bg-green-600 hover:bg-green-500 rounded-full text-white transition-colors flex-shrink-0"
+              >
+                <Send size={17} />
+              </button>
+            </div>
           </div>
         )}
 
