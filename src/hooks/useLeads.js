@@ -14,6 +14,7 @@ export function useLeads(userId) {
       .select('*')
       .eq('user_id', userId)
       .order('score', { ascending: false })
+      .range(0, 999)
 
     if (error) setError(error.message)
     else setLeads(data || [])

@@ -16,6 +16,7 @@ export function useLeadList(userId) {
       .from('leads_summary')
       .select('*')
       .eq('user_id', userId)
+      .range(0, 999)
 
     if (!error) setLeads(data || [])
     setLoading(false)
