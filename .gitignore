@@ -7,3 +7,5 @@ dist
 
 # Pasta antiga / duplicada — não subir no git
 prospectagem/
+
+.vercel
