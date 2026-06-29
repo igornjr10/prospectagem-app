@@ -623,12 +623,12 @@ function WaPanel({ lead, userId, onClose, onSent }) {
 }
 
 // ─── LeadProfile (principal) ───────────────────────────────────────────────
-export default function LeadProfile({ lead: initialLead, userId, onClose, onVisit }) {
+export default function LeadProfile({ lead: initialLead, userId, onClose, onVisit, initialTab = 'historico' }) {
   const [lead, setLead]           = useState(initialLead)
   const [visits, setVisits]       = useState([])
   const [waMsgs, setWaMsgs]       = useState([])
   const [loadingVisits, setLoadingVisits] = useState(true)
-  const [activeTab, setActiveTab] = useState('historico')
+  const [activeTab, setActiveTab] = useState(initialTab)
   const [showWaPanel, setShowWaPanel]     = useState(false)
   const [showEditPanel, setShowEditPanel] = useState(false)
 

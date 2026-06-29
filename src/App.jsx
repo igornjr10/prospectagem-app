@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from 'react'
-import { Map, CalendarDays, LayoutDashboard, List } from 'lucide-react'
+import { Map, CalendarDays, LayoutDashboard, List, MessageCircle } from 'lucide-react'
 import { supabase } from './lib/supabase'
 import MapView from './components/map/MapView'
 import LeadForm from './components/leads/LeadForm'
@@ -8,10 +8,13 @@ import VisitForm from './components/visits/VisitForm'
 import AgendaView from './components/agenda/AgendaView'
 import Dashboard from './components/dashboard/Dashboard'
 import LeadList from './components/leads/LeadList'
+import ChatView from './components/chat/ChatView'
+import { useFollowUps } from './hooks/useFollowUps'
 
 const NAV_ITEMS = [
   { id: 'map',       icon: Map,             label: 'Mapa' },
   { id: 'leads',     icon: List,            label: 'Leads' },
+  { id: 'chat',      icon: MessageCircle,   label: 'Chat' },
   { id: 'agenda',    icon: CalendarDays,    label: 'Agenda' },
   { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
 ]
@@ -22,8 +25,11 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(true)
   const [sellerName, setSellerName]   = useState('Vendedor')
   const [newLeadCoords, setNewLeadCoords] = useState(null)
-  const [visitLead, setVisitLead]     = useState(null)
-  const [profileLead, setProfileLead] = useState(null)
+  const [visitLead, setVisitLead]         = useState(null)
+  const [profileLead, setProfileLead]     = useState(null)
+  const [profileInitialTab, setProfileInitialTab] = useState('historico')
+
+  const { followUps: pendingFollowUps } = useFollowUps(session?.user?.id)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -60,6 +66,16 @@ export default function App() {
 
   const userId = session.user.id
 
+  const urgentCount = pendingFollowUps.filter(f => {
+    const today = new Date(); today.setHours(0, 0, 0, 0)
+    return new Date(f.scheduled_date + 'T00:00:00') <= today
+  }).length
+
+  function openProfile(lead, tab) {
+    setProfileLead(lead)
+    setProfileInitialTab(tab || 'historico')
+  }
+
   return (
     <div className="h-screen w-screen flex flex-col bg-gray-950 overflow-hidden">
 
@@ -90,9 +106,11 @@ export default function App() {
         <LeadProfile
           lead={profileLead}
           userId={userId}
-          onClose={() => setProfileLead(null)}
+          initialTab={profileInitialTab}
+          onClose={() => { setProfileLead(null); setProfileInitialTab('historico') }}
           onVisit={(lead) => {
             setProfileLead(null)
+            setProfileInitialTab('historico')
             setVisitLead(lead)
           }}
         />
@@ -105,19 +123,26 @@ export default function App() {
             userId={userId}
             onNewLead={(coords) => setNewLeadCoords(coords)}
             onVisit={(lead) => setVisitLead(lead)}
-            onProfile={(lead) => setProfileLead(lead)}
+            onProfile={(lead) => openProfile(lead)}
           />
         )}
         {activePage === 'leads' && (
           <LeadList
             userId={userId}
             onVisit={(lead) => setVisitLead(lead)}
-            onProfile={(lead) => setProfileLead(lead)}
+            onProfile={(lead) => openProfile(lead)}
             onNewLead={() => setNewLeadCoords({})}
           />
         )}
-        {activePage === 'agenda'    && <AgendaView userId={userId} onVisit={(lead) => setVisitLead(lead)} onProfile={(lead) => setProfileLead(lead)} />}
-        {activePage === 'dashboard' && <Dashboard userId={userId} onVisit={(lead) => setVisitLead(lead)} onProfile={(lead) => setProfileLead(lead)} />}
+        {activePage === 'chat' && (
+          <ChatView
+            userId={userId}
+            onProfile={openProfile}
+            onVisit={(lead) => setVisitLead(lead)}
+          />
+        )}
+        {activePage === 'agenda'    && <AgendaView userId={userId} onVisit={(lead) => setVisitLead(lead)} onProfile={(lead) => openProfile(lead)} />}
+        {activePage === 'dashboard' && <Dashboard  userId={userId} onVisit={(lead) => setVisitLead(lead)} onProfile={(lead) => openProfile(lead)} />}
       </main>
 
       {/* Navegação inferior */}
@@ -125,6 +150,7 @@ export default function App() {
         <div className="flex">
           {NAV_ITEMS.map(({ id, icon: Icon, label }) => {
             const active = activePage === id
+            const badge  = id === 'chat' && urgentCount > 0 ? urgentCount : 0
             return (
               <button
                 key={id}
@@ -133,7 +159,14 @@ export default function App() {
                   active ? 'text-orange-400' : 'text-gray-500 hover:text-gray-300'
                 }`}
               >
-                <Icon size={22} strokeWidth={active ? 2.5 : 1.8} />
+                <div className="relative">
+                  <Icon size={22} strokeWidth={active ? 2.5 : 1.8} />
+                  {badge > 0 && (
+                    <span className="absolute -top-1.5 -right-2.5 bg-red-500 text-white text-[9px] font-bold rounded-full min-w-[15px] h-[15px] flex items-center justify-center px-1 leading-none">
+                      {badge > 99 ? '99+' : badge}
+                    </span>
+                  )}
+                </div>
                 <span className="text-[10px] font-medium">{label}</span>
               </button>
             )
