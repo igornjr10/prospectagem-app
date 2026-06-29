@@ -22,8 +22,8 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: 'Prospectagem Marketpro',
-        short_name: 'Prospectar',
+        name: 'ProspectPro Marketpro',
+        short_name: 'ProspectPro',
         description: 'Sistema de prospectagem em campo para vendedor externo',
         theme_color: '#030712',
         background_color: '#030712',
