@@ -7,9 +7,9 @@ import {
 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 
-const EVO_URL      = import.meta.env.VITE_EVOLUTION_API_URL
-const EVO_KEY      = import.meta.env.VITE_EVOLUTION_API_KEY
-const EVO_INSTANCE = import.meta.env.VITE_EVOLUTION_INSTANCE
+const EVO_URL      = (import.meta.env.VITE_EVOLUTION_API_URL      || '').replace(/^﻿/, '').trim()
+const EVO_KEY      = (import.meta.env.VITE_EVOLUTION_API_KEY      || '').replace(/^﻿/, '').trim()
+const EVO_INSTANCE = (import.meta.env.VITE_EVOLUTION_INSTANCE     || '').replace(/^﻿/, '').trim()
 
 // ─── Configs ───────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
