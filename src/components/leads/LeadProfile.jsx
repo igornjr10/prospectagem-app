@@ -473,14 +473,20 @@ function WaPanel({ lead, userId, onClose, onSent }) {
     }
 
     let sent = false
+    let errorMsg = ''
     try {
       const res = await fetch(`${EVO_URL}/message/sendText/${EVO_INSTANCE}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', apikey: EVO_KEY },
         body: JSON.stringify({ number: '55' + cleanPhone, textMessage: { text: messageText } }),
       })
-      sent = res.ok
-    } catch { sent = false }
+      if (res.ok) {
+        sent = true
+      } else {
+        const body = await res.json().catch(() => ({}))
+        errorMsg = body?.message || body?.error || `HTTP ${res.status}`
+      }
+    } catch (e) { errorMsg = e.message || 'Erro de rede' }
 
     const activeTpl = WA_TEMPLATES.find(t => t.id === selectedTpl)
     await supabase.from('whatsapp_messages').insert({
@@ -493,7 +499,7 @@ function WaPanel({ lead, userId, onClose, onSent }) {
     })
 
     setSending(false)
-    setStatus(sent ? 'ok' : 'error')
+    setStatus(sent ? 'ok' : { error: true, msg: errorMsg })
     if (sent) setTimeout(() => { onSent?.(); onClose() }, 1200)
   }
 
@@ -599,10 +605,13 @@ function WaPanel({ lead, userId, onClose, onSent }) {
             <span className="text-green-400 text-sm font-medium">Mensagem enviada!</span>
           </div>
         )}
-        {status === 'error' && (
-          <div className="flex items-center gap-2 bg-red-900/30 border border-red-800/50 rounded-xl px-4 py-3">
-            <AlertCircle size={16} className="text-red-400" />
-            <span className="text-red-400 text-sm">Falha no envio — verifique a instância WhatsApp</span>
+        {status?.error && (
+          <div className="flex items-start gap-2 bg-red-900/30 border border-red-800/50 rounded-xl px-4 py-3">
+            <AlertCircle size={16} className="text-red-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-red-400 text-sm font-medium">Falha no envio</p>
+              {status.msg && <p className="text-red-400/70 text-xs mt-0.5 font-mono break-all">{status.msg}</p>}
+            </div>
           </div>
         )}
 
