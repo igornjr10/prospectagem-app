@@ -478,7 +478,7 @@ function WaPanel({ lead, userId, onClose, onSent }) {
       const res = await fetch(`${EVO_URL}/message/sendText/${EVO_INSTANCE}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', apikey: EVO_KEY },
-        body: JSON.stringify({ number: '55' + cleanPhone, textMessage: { text: messageText } }),
+        body: JSON.stringify({ number: '55' + cleanPhone, text: messageText }),
       })
       if (res.ok) {
         sent = true
